@@ -128,7 +128,7 @@ paths_2 <- function(location_input){
   return(num_paths)
 }
 
-paths_2("svr")
+#paths_2("svr")
 svr2fft <- paths_2("fft")
 svr2dac <- paths_2("dac")
 
@@ -166,7 +166,7 @@ paths_3 <- function(location_input){
   return(num_paths)
 }
 
-paths_3("fft")
+#paths_3("fft")
 fft2dac <- paths_3("dac")
 fft2out <- paths_3("out")
 
@@ -205,8 +205,9 @@ paths_4 <- function(location_input){
   return(num_paths)
 }
 
-paths_4("dac")
+#paths_4("dac")
 dac2fft<- paths_4("fft")
 dac2out <- paths_4("out")
 
+options(scipen=999)
 svr2fft*fft2dac*dac2out
