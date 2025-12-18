@@ -31,42 +31,7 @@ for (idx in 2:nrow(new_input)){
 
 sum(new_input$pos %% 100==0)
 
-
-#new_input$pos <- new_input$pos %% 100
-
-new_input$threshold_down <- new_input$pos %%100
-new_input$threshold_up <- 100-new_input$threshold_down
-new_input$threshold_down[new_input$threshold_down==0] <- 100
-new_input$threshold_up[new_input$threshold_up==0] <- 100
-
-
-new_input$cross_up <- 0
-new_input$cross_down <- 0
-new_input$cross_up[new_input$turn>new_input$threshold_up] <- 1 
-new_input$cross_down[new_input$turn<(-1*new_input$threshold_down)] <- 1
-
-new_input$num_crosses <- 0
-
-for (idx in 1:nrow(new_input)){
-  if(new_input$cross_up[idx]==1){
-    new_input$num_crosses[idx] <- floor(
-      (new_input$turn[idx]-new_input$threshold_up[idx]) / 100)+1
-    if((new_input$turn[idx] %% 100) %in% new_input[idx,4:5]){
-      new_input$num_crosses[idx] <- new_input$num_crosses[idx]-1
-    }
-  }
-  if(new_input$cross_down[idx]==1){
-    new_input$num_crosses[idx] <- floor(
-      (-new_input$turn[idx]-new_input$threshold_down[idx]) / 100)+1
-    
-    if((new_input$turn[idx] %% 100) %in% new_input[idx,4:5]){
-      new_input$num_crosses[idx] <- new_input$num_crosses[idx]-1
-    }
-  }
-}
-
-sum(new_input$pos %% 100==0) + sum(new_input$num_crosses)
-
+#part 2
 #brute force way
 
 current_pos <- 50
