@@ -10,7 +10,7 @@ library(readr)
 
 
 
-filepath <- paste0(getwd(),"/","test.txt")
+filepath <- paste0(getwd(),"/","input.txt")
 input <- read.csv(
   filepath,
   header=F)
