@@ -82,7 +82,7 @@ repeat{
     }
   }
   
-  print(sum(paper_locs$remove))
+  #print(sum(paper_locs$remove))
   if(sum(paper_locs$remove)==0){
     break
   }

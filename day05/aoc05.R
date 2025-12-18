@@ -69,7 +69,7 @@ repeat{
     current_position <- min(ranges$bottom[ranges$bottom>current_position])
     #set up the next block
     blocks <- rbind(blocks,c(current_position,0))
-    print(current_position)
+    #print(current_position)
   } else{
     #if you're in several blocks go to the top of them then start agaimn
     current_position <- max(ranges$top[current_blocks])
