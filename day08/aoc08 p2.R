@@ -7,9 +7,6 @@ library(dplyr)
 library(stringr)
 library(readr)
 #load in data
-
-
-
 filepath <- paste0(getwd(),"/","input.txt")
 input <- read.csv(
   filepath,
@@ -60,7 +57,6 @@ repeat{
     if (element_idx==num_elements){
       connections[current_connection[1],current_connection[2]] <- 1
       connections[current_connection[2],current_connection[1]] <- 1
-      #print it
       #print(paste0("current connection ",connection_idx))
       #print(current_connection)
       #make little lists of which ones are now connected
@@ -103,25 +99,13 @@ repeat{
         if(!any(sapply(networks, function(y) current_connection %in% y))){
           networks[[length(networks)+1]] <- current_connection
         }
-        #if()
       }
-      #print(connection_idx)
-      
     }
-    
-    
-    
-    #
   }
   if(length(networks[[1]])==num_elements){
     break
   }  
 }
 
-input$X[current_connection[1]]*input$X[current_connection[2]]
-
-#network_sizes <- sapply(networks,length)
-#network_sizes <- network_sizes[order(network_sizes,decreasing=T)]
-#prod(network_sizes[1:3])
-
+as.numeric(input$X[current_connection[1]])*as.numeric(input$X[current_connection[2]])
 

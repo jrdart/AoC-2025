@@ -104,13 +104,13 @@ for(connection_idx in 1:1000){
         }
         #if()
       }
-      print(connection_idx/1000)
+      if(connection_idx %% 10 ==0){
+        print(paste0(connection_idx/10,"%"))
+      }
+      
       
     }
     
-    
-    
-    #
   }
   
 }

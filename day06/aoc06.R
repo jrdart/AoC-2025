@@ -42,7 +42,7 @@ symbols <- str_replace_all(symbols," ","")
 
 input <- read.csv(filepath,
                   header=F)
-for (eqn_idx in 1:3){#num_equations){
+for (eqn_idx in 1:num_equations){
   numbers <- NULL
   for (digit_idx in 1:num_digits) {
     number_i <- str_sub(input[-(num_numbers+1),1],
@@ -57,7 +57,7 @@ for (eqn_idx in 1:3){#num_equations){
     }
   }
   
-  print(paste0(numbers,collapse=symbols[eqn_idx]))
+  #print(paste0(numbers,collapse=symbols[eqn_idx]))
   
   curr_eqn <- paste0(numbers,collapse=symbols[eqn_idx])
   if(curr_eqn!=""){
@@ -99,8 +99,8 @@ for (eq_idx in 1:num_equations){
                     if(number_idx>1){symbols[eq_idx]},
                     number_i)
     if(number_idx == num_terms){
-      print(equation_i)
-      print(eval(parse(text=equation_i)))
+      #print(equation_i)
+      #print(eval(parse(text=equation_i)))
       running_total <- running_total + 
         eval(
           parse(
