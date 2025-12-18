@@ -6,6 +6,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(dplyr)
 library(stringr)
 library(readr)
+library(gtools)
 #load in data
 
 test_ind <- F
@@ -28,15 +29,11 @@ if(test_ind==F){
     col.names=paste0("V",1:15))
 }
 
-
-
 #work out the indicators
 indicators <- input[,1]
 indicators <- indicators %>% str_replace_all(c("\\[|\\]"="","\\."="0","\\#"="1"))
 
 #work out the joltage
-joltage <- input[sapply(input,str_detect,pattern="\\{")]
-str_extract_all(joltage[1],"\\d+")
 joltage_locs <- sapply(input,str_detect,pattern="\\{")
 joltage <- t(input)[t(joltage_locs==1)]
 
@@ -46,8 +43,6 @@ buttons <- t(input)[t(button_locs==1)]
 num_buttons <- rowSums(button_locs)
 
 num_problems <- nrow(input)
-
-problem_id <- 1
 
 coeffs <- list("")
 
@@ -66,16 +61,6 @@ for(indicator_index in 1:str_length(indicators[problem_id])){
 
 target <- unlist(str_extract_all(indicators[1],"\\d{1}"))
 
-#presses for problem 1
-presses <- c(1,1,1,0,0,0)
-
-#testing we can check whether they match 'target'
-c(
-  sum(presses[coeffs[[1]]]) %% 2,
-  sum(presses[coeffs[[2]]]) %% 2,
-  sum(presses[coeffs[[3]]]) %% 2,
-  sum(presses[coeffs[[4]]]) %% 2
-) == target
 
 #define a function that takes in presses and coefficients for a problem and gives you the output
 test_presses <- function(presses_input,coeffs_input){
@@ -89,67 +74,6 @@ test_presses <- function(presses_input,coeffs_input){
   }
   return(output)
 }
-
-#checking it works
-all(
-  test_presses(presses,coeffs)==target
-)
-
-#what about for problem 2
-problem_id <- 2
-
-coeffs <- list("")
-
-for(indicator_index in 1:str_length(indicators[problem_id])){
-  button_indexes <- 1:num_buttons[problem_id]
-  if (problem_id>1){
-    button_indexes <- button_indexes+sum(num_buttons[1:(problem_id-1)])
-  }
-  coeffs[[indicator_index]] <- 
-    c(which(
-      str_detect(buttons[button_indexes],as.character(indicator_index-1)
-      )
-    ))
-  
-}
-
-target <- unlist(str_extract_all(indicators[problem_id],"\\d{1}"))
-
-presses <- c(0,0,1,1,1)
-
-test_presses(presses,coeffs)
-
-all(
-  test_presses(presses,coeffs)==target
-)
-
-#test number 3
-problem_id <- 3
-
-coeffs <- list("")
-
-for(indicator_index in 1:str_length(indicators[problem_id])){
-  button_indexes <- 1:num_buttons[problem_id]
-  if (problem_id>1){
-    button_indexes <- button_indexes+sum(num_buttons[1:(problem_id-1)])
-  }
-  coeffs[[indicator_index]] <- 
-    c(which(
-      str_detect(buttons[button_indexes],as.character(indicator_index-1)
-      )
-    ))
-  
-}
-
-target <- unlist(str_extract_all(indicators[problem_id],"\\d{1}"))
-
-presses <- c(0,1,1,0)
-
-test_presses(presses,coeffs)
-
-all(
-  test_presses(presses,coeffs)==target
-)
 
 #set up the answer df
 solution <- data.frame(
@@ -185,8 +109,8 @@ for (problem_id in 1:num_problems){
       if(all(
         test_presses(presses,coeffs) %%2 ==target
       )) {
-        print(paste0("presses for problem ",problem_id))
-        print(presses)
+        #print(paste0("presses for problem ",problem_id))
+        #print(presses)
         solution$presses[problem_id] <- min(solution$presses[problem_id],buttons_pressed)
         
       }
@@ -197,11 +121,10 @@ for (problem_id in 1:num_problems){
 
 sum(solution$presses)
 
-
-#part 2 another way
+#part 2
 
 #can you define a function to solve 0101010 for given buttons (given button id
-#inputs are target and 
+#inputs are target and which buttons you're using
 
 target_input <- unlist(str_extract_all(indicators[1],"\\d{1}"))
 button_id <- 1
@@ -212,8 +135,8 @@ solve0101 <- function(target_input,button_id){
   if(sum(as.numeric(target_input))==0){
     return(0)
   } else if (any(as.numeric(target_input)<0)){
-    print("went negative with")
-    print(paste0(target_input,collapse=""))
+    #print("went negative with")
+    #print(paste0(target_input,collapse=""))
     return(Inf)} else if (all(even(target_input))){
       return(2*solve0101(target_input/2,button_id))
     } else {
@@ -233,7 +156,7 @@ solve0101 <- function(target_input,button_id){
           ))
         
       }
-      print(coeffs)
+      #print(coeffs)
       
       
       for (buttons_pressed in 1:num_buttons[button_id]){
@@ -259,11 +182,11 @@ solve0101 <- function(target_input,button_id){
       if(length(potential_presses==0)){
         for(recursion_id in 1:nrow(potential_presses)){
           new_target <- target_input-test_presses(potential_presses[recursion_id,],coeffs)
-          print(target_input)
-          print(-test_presses(potential_presses[recursion_id,],coeffs))
-          print(new_target)
-          print(new_target)
-          print(paste0("total presses ",sum(potential_presses[recursion_id,])," so trying ",paste0(new_target,collapse="")))
+          #print(target_input)
+          #print(-test_presses(potential_presses[recursion_id,],coeffs))
+          #print(new_target)
+          #print(new_target)
+          #print(paste0("total presses ",sum(potential_presses[recursion_id,])," so trying ",paste0(new_target,collapse="")))
           temp_solution <- min(
             temp_solution,
             sum(potential_presses[recursion_id,])+solve0101(new_target,button_id) #need to put in the divide by two bit here and in the input chekcing section
@@ -271,10 +194,9 @@ solve0101 <- function(target_input,button_id){
           )  
         }
       } else {
-        print(paste0("got stuck with no solutions for ",paste0(target_input,collapse=",")))
-        return(Inf)}
-      
-      
+        #print(paste0("got stuck with no solutions for ",paste0(target_input,collapse=",")))
+        return(Inf)
+      }
       return(temp_solution)
     }
 }
@@ -287,7 +209,7 @@ final_output <- data.frame(
 for (problem_id in 1:nrow(input)){
   current_target <- as.numeric(unlist(str_extract_all(joltage[problem_id],"\\d+")))
   final_output$presses[problem_id] <- solve0101(current_target,problem_id)
-  print(problem_id/nrow(input))
+  #print(problem_id/nrow(input))
 }
 
 sum(final_output$presses)
